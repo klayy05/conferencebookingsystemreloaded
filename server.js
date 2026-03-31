@@ -1821,27 +1821,28 @@ async function handleApi(request, response, requestUrl) {
         if (!requireAdmin(session, response)) {
             return;
         }
-
-        const meetingId = requestUrl.pathname.split('/').pop();
+    
+        const encodedId = requestUrl.pathname.split('/').pop();
+        const meetingId = decodeURIComponent(encodedId);  // 👈 ADD THIS
         const body = await readJsonBody(request);
         const updates = validateMeetingUpdatePayload(body);
-
+    
         const { data: updatedRow, error } = await supabase
             .from('meetings')
             .update(updates)
             .eq('id', meetingId)
             .select('*')
             .maybeSingle();
-
+    
         if (error) {
             throw error;
         }
-
+    
         if (!updatedRow) {
             notFound(response);
             return;
         }
-
+    
         sendJson(response, 200, {
             meeting: normalizeMeeting(updatedRow)
         });
@@ -1852,17 +1853,17 @@ async function handleApi(request, response, requestUrl) {
         if (!requireAdmin(session, response)) {
             return;
         }
-
-        const meetingId = requestUrl.pathname.split('/').pop();
+    
+        const encodedId = requestUrl.pathname.split('/').pop();
+        const meetingId = decodeURIComponent(encodedId);  // 👈 ADD THIS
         const { error } = await supabase.from('meetings').delete().eq('id', meetingId);
         if (error) {
             throw error;
         }
-
+    
         sendNoContent(response);
         return;
     }
-
     notFound(response);
 }
 
