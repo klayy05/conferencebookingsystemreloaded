@@ -1735,7 +1735,8 @@ async function handleApi(request, response, requestUrl) {
             return;
         }
 
-        const employeeId = requestUrl.pathname.split('/').pop();
+        const encodedId = requestUrl.pathname.split('/').pop();
+        const employeeId = decodeURIComponent(encodedId);
         const body = await readJsonBody(request);
         const updates = validateEmployeeUpdatePayload(body);
 

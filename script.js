@@ -1165,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = document.createElement('tr');
                 row.setAttribute('data-id', user.id);
                 row.innerHTML = `
-                    <td>${user.id}${user.id}  <!-- Wait, you have ${user.id} twice? -->
+                    <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.email}</td>
                     <td>${user.role}</td>
@@ -1486,10 +1486,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.classList.contains('btn-edit')) {
             const row = e.target.closest('tr');
             const id = row.querySelectorAll('td')[0]?.textContent?.trim();
-
+            console.log("edit btn is hit. ID:", id);  // 👈 ADD ID HERE
+        
             if (row.closest('#manage-users')) {
+                console.log("Found #manage-users section");  // 👈 ADD THIS
                 const user = appState.employees.find(u => u.id === id);
+                console.log("User found:", user);  // 👈 ADD THIS
                 if (!user) return;
+                
+                console.log("About to show form modal");  // 👈 ADD THIS
                 const formData = await showFormModal({
                     title: `Update Employee ${id}`,
                     submitText: 'Save Changes',
@@ -1503,7 +1508,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         { name: 'password', label: 'New Password', type: 'password', placeholder: 'Leave blank to keep current' }
                     ]
                 });
+                console.log("Form modal returned:", formData);  // 👈 ADD THIS
                 if (!formData) return;
+                
                 const payload = {
                     name: (formData.name || '').trim(),
                     email: (formData.email || '').trim(),
