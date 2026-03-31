@@ -4,9 +4,11 @@
   "private": true,
   "description": "Meeting room booking backend and static frontend for RATC.",
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.8"
+    "@supabase/supabase-js": "^2.49.8",
+    "nodemon": "^3.1.14"
   },
   "scripts": {
+    "dev": "nodemon server.js",
     "start": "node server.js",
     "check": "node --check server.js && node --check script.js",
     "test": "node --test"

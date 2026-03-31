@@ -658,7 +658,7 @@ function getStatusClass(status) {
 // ========================================
 // PASSWORD UTILITIES
 // ========================================
-function getPasswordStrength(password) {
+/*function getPasswordStrength(password) {
     let score = 0;
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
@@ -666,7 +666,7 @@ function getPasswordStrength(password) {
     if (/\d/.test(password)) score++;
     if (/[@$!%*?&]/.test(password)) score++;
     return score;
-}
+}*/
 
 function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
@@ -1151,20 +1151,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUsersDisplay() {
         const usersTable = document.querySelector('#manage-users tbody');
         if (!usersTable) return;
-
+    
         const rowsPerPage = 5;
         let currentPage = 1;
-
+    
         function renderUsersPage(page) {
             usersTable.innerHTML = '';
             const start = (page - 1) * rowsPerPage;
             const pageUsers = appState.employees.slice(start, start + rowsPerPage);
             const totalPages = Math.max(1, Math.ceil(appState.employees.length / rowsPerPage));
-
+    
             pageUsers.forEach(user => {
                 const row = document.createElement('tr');
+                row.setAttribute('data-id', user.id);
                 row.innerHTML = `
-                    <td>${user.id}</td>
+                    <td>${user.id}${user.id}  <!-- Wait, you have ${user.id} twice? -->
                     <td>${user.name}</td>
                     <td>${user.email}</td>
                     <td>${user.role}</td>
@@ -1173,7 +1174,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="table-actions">
                         <button class="btn btn-sm btn-edit">Edit</button>
                         <button class="btn btn-sm btn-delete">Delete</button>
-                    </td>`;
+                    </td>
+                `;
                 usersTable.appendChild(row);
             });
 
@@ -1452,12 +1454,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Manage users
             if (row.closest('#manage-users')) {
+                const id = (row.getAttribute('data-id') || row.querySelector('td')?.textContent)?.trim();
+                console.log('Deleting user with ID:', id);  
                 if (!await showConfirmModal('Delete this employee?')) return;
                 try {
+                    console.log('Sending DELETE to:', `/api/employees/${encodeURIComponent(id)}`); 
                     await apiRequest(`/api/employees/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                    console.log('Delete successful'); 
                     await refreshAdminViews();
                     showToast('Employee deleted.', 'success');
-                } catch (error) { showToast(error.message || 'Unable to delete employee.', 'error'); }
+                } catch (error) { 
+                    console.error('Delete error:', error); 
+                    showToast(error.message || 'Unable to delete employee.', 'error'); 
+                }
                 return;
             }
 

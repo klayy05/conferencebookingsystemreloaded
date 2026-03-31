@@ -1765,18 +1765,27 @@ async function handleApi(request, response, requestUrl) {
         if (!requireAdmin(session, response)) {
             return;
         }
-
-        const employeeId = requestUrl.pathname.split('/').pop();
+    
+        const encodedId = requestUrl.pathname.split('/').pop();
+        const employeeId = decodeURIComponent(encodedId); 
+        
+        // Check if employee exists before deleting
+        const { data: existing, error: checkError } = await supabase
+            .from('employees')
+            .select('id')
+            .eq('id', employeeId)
+            .maybeSingle();  
+        
         await supabase.from('sessions').delete().eq('employee_id', employeeId);
-        const { error } = await supabase.from('employees').delete().eq('id', employeeId);
+        const { data: deleted, error } = await supabase.from('employees').delete().eq('id', employeeId).select();
+        
         if (error) {
             throw error;
         }
-
+    
         sendNoContent(response);
         return;
     }
-
     if (request.method === 'GET' && requestUrl.pathname === '/api/meetings') {
         const data = await loadAppData();
         sendJson(response, 200, { meetings: data.meetings });
