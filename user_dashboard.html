@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - Meeting Room Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <button class="dashboard-nav-toggle" type="button" aria-label="Toggle dashboard navigation" aria-expanded="false" data-dashboard-nav-toggle>Menu</button>
+        <div class="dashboard-sidebar-backdrop" data-dashboard-backdrop hidden></div>
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2 data-translate="RATC Employee Panel">RATC Employee Panel</h2>
+            <ul>
+                <li><a href="#" data-section="dashboard" class="active" data-translate="Dashboard">Dashboard</a></li>
+                <li><a href="#" data-section="my-bookings" data-translate="My Bookings">My Bookings</a></li>
+                <li><a href="#" data-section="book-room" data-translate="Book a Room">Book a Room</a></li>
+                <li><a href="#" data-section="profile" data-translate="Profile">Profile</a></li>
+                <li><a href="#" data-section="settings" data-translate="Settings">Settings</a></li>
+                <li><a href="#" class="logout-btn" data-translate="Logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 data-translate="Welcome back, User!">Welcome back, User!</h1>
+                <div class="user-info">
+                    <span>Logged in as: <strong id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9dcdaccdbe9ccd1c8c4d9c5cc87cac6c4">[email&#160;protected]</a></strong></span>
+                </div>
+            </header>
+
+            <!-- DASHBOARD SECTION -->
+            <div id="dashboard" class="content-section">
+                <!-- Stats Cards -->
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3 data-translate="Upcoming Meetings">Upcoming Meetings</h3>
+                        <div class="value">3</div>
+                    </div>
+                    <div class="card">
+                        <h3>My Bookings</h3>
+                        <div class="value">5</div>
+                    </div>
+                    <div class="card">
+                        <h3>Available Rooms</h3>
+                        <div class="value">12</div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Meetings Table -->
+                <div class="table-container">
+                    <h3 data-translate="Upcoming Meetings">Upcoming Meetings</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Meeting Name</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MY BOOKINGS SECTION -->
+            <div id="my-bookings" class="content-section is-hidden">
+                <div class="table-container">
+                    <h3>My Bookings</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Meeting</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Room</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#BK-2001</td>
+                                <td>Tech Summit 2026</td>
+                                <td>Oct 12, 2026</td>
+                                <td>12:00 PM - 1:00 PM</td>
+                                <td>Main Hall A</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-view">View</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK-2002</td>
+                                <td>Design Workshop</td>
+                                <td>Oct 15, 2026</td>
+                                <td>10:30 AM - 12:00 PM</td>
+                                <td>Room 302</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-view">View</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK-2003</td>
+                                <td>AI Innovation Conference</td>
+                                <td>Nov 01, 2026</td>
+                                <td>2:00 PM - 2:30 PM</td>
+                                <td>Main Hall B</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-view">View</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK-2004</td>
+                                <td>Web Dev Meetup</td>
+                                <td>Nov 10, 2026</td>
+                                <td>9:00 AM - 10:00 AM</td>
+                                <td>Room 105</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-view">View</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK-2005</td>
+                                <td>Cloud Computing Summit</td>
+                                <td>Nov 20, 2026</td>
+                                <td>11:00 AM - 12:30 PM</td>
+                                <td>Main Hall C</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-view">View</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BOOK A ROOM SECTION -->
+            <div id="book-room" class="content-section is-hidden">
+                <div class="room-showcase card">
+                    <div class="room-showcase__controls">
+                        <div>
+                            <label for="roomTypePreviewSelect">Room Type</label>
+                            <select id="roomTypePreviewSelect" class="settings-select">
+                                <option value="meeting">Meeting</option>
+                                <option value="training">Training</option>
+                                <option value="board">Board</option>
+                                <option value="briefing">Briefing</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="roomPreviewSelect">Room</label>
+                            <select id="roomPreviewSelect" class="settings-select"></select>
+                        </div>
+                    </div>
+                    <div class="room-showcase__layout">
+                        <img id="roomPreviewImage" class="room-showcase__image" src="" alt="Selected room preview" />
+                        <div class="room-showcase__details">
+                            <h3 id="roomPreviewTitle">Room Preview</h3>
+                            <p id="roomPreviewMeta" class="room-showcase__meta"></p>
+                            <p id="roomPreviewFeatures" class="room-showcase__features"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <h3>Available Rooms</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Room ID</th>
+                                <th>Image</th>
+                                <th>Room Name</th>
+                                <th>Capacity</th>
+                                <th>Location</th>
+                                <th>Duration</th>
+                                <th>Availability</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#RM-001</td>
+                                <td>Meeting Room A</td>
+                                <td>10+</td>
+                                <td>Ground Floor</td>
+                                <td>2 hrs</td>
+                                <td><span class="status available">Available</span></td>
+                                <td><button class="btn btn-sm btn-primary book-room-btn">Book Now</button></td>
+                            </tr>
+                            <tr>
+                                <td>#RM-002</td>
+                                <td>Meeting Room B</td>
+                                <td>10+</td>
+                                <td>2nd Floor</td>
+                                <td>1.5 hrs</td>
+                                <td><span class="status available">Available</span></td>
+                                <td><button class="btn btn-sm btn-primary book-room-btn">Book Now</button></td>
+                            </tr>
+                            <tr>
+                                <td>#RM-003</td>
+                                <td>Meeting Room C</td>
+                                <td>10+</td>
+                                <td>3rd Floor</td>
+                                <td>45 mins</td>
+                                <td><span class="status booked">Booked</span></td>
+                                <td><button class="btn btn-sm" disabled>Unavailable</button></td>
+                            </tr>
+                            <tr>
+                                <td>#RM-004</td>
+                                <td>Training Room 1</td>
+                                <td>20+</td>
+                                <td>2nd Floor</td>
+                                <td>1 hr</td>
+                                <td><span class="status available">Available</span></td>
+                                <td><button class="btn btn-sm btn-primary book-room-btn">Book Now</button></td>
+                            </tr>
+                            <tr>
+                                <td>#RM-005</td>
+                                <td>Training Room 2</td>
+                                <td>50+</td>
+                                <td>3rd Floor</td>
+                                <td>3 hrs</td>
+                                <td><span class="status available">Available</span></td>
+                                <td><button class="btn btn-sm btn-primary book-room-btn">Book Now</button></td>
+                            </tr>
+                            <tr>
+                                <td>#RM-006</td>
+                                <td>Board Room</td>
+                                <td>50+</td>
+                                <td>3rd Floor</td>
+                                <td>30 mins</td>
+                                <td><span class="status available">Available</span></td>
+                                <td><button class="btn btn-sm btn-primary book-room-btn">Book Now</button></td>
+                            </tr>
+                            <tr>
+                                <td>#RM-007</td>
+                                <td>Briefing Room</td>
+                                <td>10+</td>
+                                <td>Ground Floor</td>
+                                <td>2 hrs</td>
+                                <td><span class="status booked">Booked</span></td>
+                                <td><button class="btn btn-sm" disabled>Unavailable</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </table>
+                    <div class="pagination" id="roomPagination">
+                        <button class="btn btn-sm pagination-prev" disabled>Prev</button>
+                        <span class="pagination-info">Page 1 of 2</span>
+                        <button class="btn btn-sm pagination-next">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE SECTION -->
+            <div id="profile" class="content-section is-hidden">
+                <div class="profile-container">
+                    <div class="card card-max-600">
+                        <h3>My Profile</h3>
+                        <div class="profile-info">
+                            <div class="profile-field">
+                                <label>Full Name:</label>
+                                <span>John Doe</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Email:</label>
+                                <span id="profileEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfaaacbaad9fbaa7beb2afb3baf1bcb0b2">[email&#160;protected]</a></span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Phone:</label>
+                                <span>+1 (555) 123-4567</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Organization:</label>
+                                <span>Tech Solutions Inc.</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Member Since:</label>
+                                <span>January 2023</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary edit-profile-btn mt-1">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS SECTION -->
+            <div id="settings" class="content-section is-hidden">
+                <div class="card card-max-600">
+                    <h3 data-translate="Account Settings">Account Settings</h3>
+                    <form class="settings-form">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> <span data-translate="Email notifications">Email notifications</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> <span data-translate="SMS reminders">SMS reminders</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox"> <span data-translate="Weekly newsletter">Weekly newsletter</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="Language:">Language:</label>
+                            <select id="langSelect" class="settings-select">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="Timezone:">Timezone:</label>
+                            <select id="tzSelect" class="settings-select">
+                                <option>GMT (UTC+00:00)</option>
+                                <option>UTC-5 (Eastern Time)</option>
+                                <option>UTC-6 (Central Time)</option>
+                                <option>UTC-7 (Mountain Time)</option>
+                                <option>UTC-8 (Pacific Time)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary save-settings-btn">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

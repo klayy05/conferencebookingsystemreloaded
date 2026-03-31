@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Meeting Room Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <button class="dashboard-nav-toggle" type="button" aria-label="Toggle dashboard navigation" aria-expanded="false" data-dashboard-nav-toggle>Menu</button>
+        <div class="dashboard-sidebar-backdrop" data-dashboard-backdrop hidden></div>
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2>RATC Admin Panel</h2>
+            <ul>
+                <li><a href="#" data-section="overview" class="active" data-translate="Overview">Overview</a></li>
+                <li><a href="#" data-section="manage-users" data-translate="Manage Employees">Manage Employees</a></li>
+                <li><a href="#" data-section="conferences" data-translate="Meetings">Meetings</a></li>
+                <li><a href="#" data-section="bookings" data-translate="Bookings">Bookings</a></li>
+                <li><a href="#" class="logout-btn" data-translate="Logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 data-translate="Admin Overview">Admin Overview</h1>
+                <div class="user-info">
+                    <span data-translate="Logged in as:">Logged in as:</span> <strong id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0e6f6a6367604e6b766f637e626b206d6163">[email&#160;protected]</a></strong>
+                </div>
+            </header>
+
+            <!-- OVERVIEW SECTION -->
+            <div id="overview" class="content-section">
+                <!-- Stats Cards -->
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3 data-translate="Total Employees">Total Employees</h3>
+                        <div class="value">1,240</div>
+                    </div>
+                    <div class="card">
+                        <h3 data-translate="Total Rooms">Total Rooms</h3>
+                        <div class="value">45</div>
+                    </div>
+                    <div class="card">
+                        <h3 data-translate="Total Bookings">Total Bookings</h3>
+                        <div class="value">892</div>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings Table -->
+                <div class="table-container">
+                    <h3 data-translate="Recent Bookings">Recent Bookings</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-translate="Booking ID">Booking ID</th>
+                                <th data-translate="Employee">Employee</th>
+                                <th data-translate="Meeting">Meeting</th>
+                                <th>Room</th>
+                                <th data-translate="Date">Date</th>
+                                <th>Duration</th>
+                                <th data-translate="Status">Status</th>
+                                <th data-translate="Action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-bookings-list">
+                            <tr>
+                                <td>#BK-1001</td>
+                                <td>john.doe@example.com</td>
+                                <td>Tech Summit 2026</td>
+                                <td>Main Hall A</td>
+                                <td>Oct 12, 2026</td>
+                                <td>2 hrs</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions"><div class="action-buttons"><button class="btn btn-sm btn-edit">Edit</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1002</td>
+                                <td>jane.smith@example.com</td>
+                                <td>Design Workshop</td>
+                                <td>Room 302</td>
+                                <td>Oct 15, 2026</td>
+                                <td>1.5 hrs</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td class="table-actions"><div class="action-buttons"><button class="btn btn-sm btn-edit">Edit</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1003</td>
+                                <td>mike.j@example.com</td>
+                                <td>AI Innovation</td>
+                                <td>Main Hall B</td>
+                                <td>Nov 01, 2026</td>
+                                <td>30 mins</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions"><div class="action-buttons"><button class="btn btn-sm btn-edit">Edit</button></div></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1004</td>
+                                <td>sarah.w@example.com</td>
+                                <td>Cloud Computing Summit</td>
+                                <td>Main Hall C</td>
+                                <td>Nov 05, 2026</td>
+                                <td>3 hrs</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td class="table-actions"><div class="action-buttons"><button class="btn btn-sm btn-edit">Edit</button></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MANAGE EMPLOYEES SECTION -->
+            <div id="manage-users" class="content-section is-hidden">
+                <div class="table-container">
+                    <div class="section-header-row">
+                        <h3 data-translate="All Employees">All Employees</h3>
+                        <button class="btn btn-primary add-user-btn" data-translate="Add New Employee">Add New Employee</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-translate="Employee ID">Employee ID</th>
+                                <th data-translate="Name">Name</th>
+                                <th data-translate="Email">Email</th>
+                                <th data-translate="Role">Role</th>
+                                <th data-translate="Joined">Joined</th>
+                                <th data-translate="Status">Status</th>
+                                <th data-translate="Action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#USR-001</td>
+                                <td>John Doe</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="274d484f490943484267425f464a574b420944484a">[email&#160;protected]</a></td>
+                                <td>User</td>
+                                <td>Jan 15, 2026</td>
+                                <td><span class="status active">Active</span></td>
+                                <td class="table-actions"><button class="btn btn-sm btn-edit">Edit</button><button class="btn btn-sm btn-delete">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>#USR-002</td>
+                                <td>Jane Smith</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6ccc7c8c388d5cbcfd2cee6c3dec7cbd6cac388c5c9cb">[email&#160;protected]</a></td>
+                                <td>User</td>
+                                <td>Feb 20, 2023</td>
+                                <td><span class="status active">Active</span></td>
+                                <td>
+                                    <div class="table-actions"><button class="btn btn-sm btn-edit">Edit</button><button class="btn btn-sm btn-delete">Delete</button></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#USR-003</td>
+                                <td>Mike Johnson</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f19c989a94df9bb19489909c819d94df929e9c">[email&#160;protected]</a></td>
+                                <td>User</td>
+                                <td>Mar 10, 2023</td>
+                                <td><span class="status active">Active</span></td>
+                                <td>
+                                    <div class="table-actions"><button class="btn btn-sm btn-edit">Edit</button><button class="btn btn-sm btn-delete">Delete</button></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#USR-004</td>
+                                <td>Sarah Wilson</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1162706370793f66517469707c617d743f727e7c">[email&#160;protected]</a></td>
+                                <td>Admin</td>
+                                <td>Apr 05, 2023</td>
+                                <td><span class="status active">Active</span></td>
+                                <td>
+                                    <div class="table-actions"><button class="btn btn-sm btn-edit">Edit</button><button class="btn btn-sm btn-delete">Delete</button></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#USR-005</td>
+                                <td>Tom Brown</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c584341024e5e435b426c49544d415c4049024f4341">[email&#160;protected]</a></td>
+                                <td>User</td>
+                                <td>May 12, 2023</td>
+                                <td><span class="status inactive">Inactive</span></td>
+                                <td>
+                                    <div class="table-actions"><button class="btn btn-sm btn-edit">Edit</button><button class="btn btn-sm btn-delete">Delete</button></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="usersPagination">
+                        <button class="btn btn-sm pagination-prev" disabled>Prev</button>
+                        <span class="pagination-info">Page 1 of 1</span>
+                        <button class="btn btn-sm pagination-next">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEETINGS SECTION -->
+            <div id="conferences" class="content-section is-hidden">
+                <div class="table-container">
+                    <div class="section-header-row">
+                        <h3 data-translate="All Meetings">All Meetings</h3>
+                        <button class="btn btn-primary add-conf-btn" data-translate="Add Meeting">Add Meeting</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-translate="Meeting ID">Meeting ID</th>
+                                <th data-translate="Name">Name</th>
+                                <th data-translate="Date">Date</th>
+                                <th data-translate="Location">Location</th>
+                                <th data-translate="Capacity">Capacity</th>
+                                <th data-translate="Status">Status</th>
+                                <th data-translate="Action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#CONF-001</td>
+                                <td>Tech Summit 2026</td>
+                                <td>Oct 12, 2026</td>
+                                <td>Main Hall A</td>
+                                <td>20</td>
+                                <td><span class="status active">Active</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-edit">Edit</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#CONF-002</td>
+                                <td>Design Workshop</td>
+                                <td>Oct 15, 2026</td>
+                                <td>Room 302</td>
+                                <td>15</td>
+                                <td><span class="status active">Active</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-edit">Edit</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#CONF-003</td>
+                                <td>AI Innovation Conference</td>
+                                <td>Nov 01, 2026</td>
+                                <td>Main Hall B</td>
+                                <td>15</td>
+                                <td><span class="status active">Active</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-edit">Edit</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#CONF-004</td>
+                                <td>Cloud Computing Summit</td>
+                                <td>Nov 20, 2026</td>
+                                <td>Main Hall C</td>
+                                <td>30</td>
+                                <td><span class="status upcoming">Upcoming</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-edit">Edit</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#CONF-005</td>
+                                <td>Web Dev Meetup</td>
+                                <td>Nov 10, 2026</td>
+                                <td>Room 105</td>
+                                <td>15</td>
+                                <td><span class="status full">Full</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-sm btn-edit">Edit</button>
+                                    <button class="btn btn-sm btn-delete">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="confPagination">
+                        <button class="btn btn-sm pagination-prev" disabled>Prev</button>
+                        <span class="pagination-info">Page 1 of 1</span>
+                        <button class="btn btn-sm pagination-next">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOOKINGS SECTION -->
+            <div id="bookings" class="content-section is-hidden">
+                <div class="table-container">
+                    <div class="section-header-row">
+                        <h3 data-translate="All Bookings">All Bookings</h3>
+                        <div class="section-actions-row">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-primary dropdown-toggle" data-translate="Export">Export</button>
+                                <div class="dropdown-menu">
+                                    <a href="#" class="dropdown-item export-btn" data-format="pdf" data-translate="Export as PDF">Export as PDF</a>
+                                    <a href="#" class="dropdown-item export-btn" data-format="docx" data-translate="Export as Word">Export as Word</a>
+                                    <a href="#" class="dropdown-item export-btn" data-format="xlsx" data-translate="Export as Excel">Export as Excel</a>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary create-booking-btn" data-translate="Create Booking">Create Booking</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-translate="Booking ID">Booking ID</th>
+                                <th data-translate="Employee">Employee</th>
+                                <th data-translate="Meeting">Meeting</th>
+                                <th data-translate="Room">Room</th>
+                                <th data-translate="Date">Date</th>
+                                <th data-translate="Duration">Duration</th>
+                                <th data-translate="Status">Status</th>
+                                <th data-translate="Action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#BK-1001</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18b8e898fcf858e84a18499808c918d84cf828e8c">[email&#160;protected]</a></td>
+                                <td>Tech Summit 2026</td>
+                                <td>Main Hall A</td>
+                                <td>Oct 12, 2026</td>
+                                <td>2 hrs</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions"><button class="btn btn-sm btn-view">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1002</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="412b202f246f322c283529012439202c312d246f222e2c">[email&#160;protected]</a></td>
+                                <td>Design Workshop</td>
+                                <td>Room 302</td>
+                                <td>Oct 15, 2026</td>
+                                <td>1.5 hrs</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td class="table-actions"><button class="btn btn-sm btn-view">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1003</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="660b0f0d03480c0908031526031e070b160a034805090b">[email&#160;protected]</a></td>
+                                <td>AI Innovation Conference</td>
+                                <td>Main Hall B</td>
+                                <td>Nov 01, 2026</td>
+                                <td>30 mins</td>
+                                <td><span class="status confirmed">Confirmed</span></td>
+                                <td class="table-actions"><button class="btn btn-sm btn-view">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1004</td>
+                                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b0c3d1c2d1d89ec7d9dcc3dfdef0d5c8d1ddc0dcd59ed3dfdd">[email&#160;protected]</a></td>
+                                <td>Cloud Computing Summit</td>
+                                <td>Main Hall C</td>
+                                <td>Nov 20, 2026</td>
+                                <td>3 hrs</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td class="table-actions"><button class="btn btn-sm btn-view">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>#BK-1005</td>
+                                <td>example.user@example.com</td>
+                                <td>Gala Event 2026</td>
+                                <td>Main Hall D</td>
+                                <td>Dec 01, 2026</td>
+                                <td>1 hr</td>
+                                <td><span class='status pending'>Pending</span></td>
+                                <td class='table-actions'><button class='btn btn-sm btn-view'>View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="bookingsPagination">
+                        <button class="btn btn-sm pagination-prev" disabled>Prev</button>
+                        <span class="pagination-info">Page 1 of 1</span>
+                        <button class="btn btn-sm pagination-next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src='script.js'></script>
+</body>
+</html>
