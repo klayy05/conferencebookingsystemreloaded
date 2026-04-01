@@ -1261,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderRecentBookings() {
         const container = document.getElementById('recent-bookings-list');
         if (!container) return;
-        const recent = appState.bookings.slice(0, 5);
+        const recent = appState.bookings.slice(0, 3);
         if (!recent.length) {
             container.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1rem;color:#6b7280;">No recent bookings</td></tr>';
             return;
