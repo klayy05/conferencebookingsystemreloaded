@@ -1442,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Manage users
             if (row.closest('#manage-users')) {
                 const id = (row.getAttribute('data-id') || row.querySelector('td')?.textContent)?.trim();
-                console.log('Deleting user with ID:', id);  
+  
                 if (!await showConfirmModal('Delete this employee?')) return;
                 try {
                     console.log('Sending DELETE to:', `/api/employees/${encodeURIComponent(id)}`); 
