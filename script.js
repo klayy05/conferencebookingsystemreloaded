@@ -1,19 +1,6 @@
-/* ========================================
-   Meeting Room Booking System - JavaScript
-   ========================================
-   Refactored: all data now fetched from API / Supabase.
-   localStorage is only used for session management and UI settings.
-   ======================================== */
-
-// ========================================
-// SHARED UTILITIES
-// ========================================
 let __toastQueue = 0;
 const SESSION_STORAGE_KEY = 'activeSession';
 
-// ========================================
-// SESSION MANAGEMENT (localStorage is fine here - it's per-user auth)
-// ========================================
 function getActiveSession() {
     try {
         const raw = localStorage.getItem(SESSION_STORAGE_KEY);
@@ -1774,89 +1761,7 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadFile(content, section + (extMap[format] || '.txt'), mimeMap[format] || 'text/plain');
             this.closest('.dropdown-menu')?.classList.remove('show');
         });
-    });
-
-    // ── Edit Profile ─────────────────────────────────────────────
-    const editProfileBtn = document.querySelector('.edit-profile-btn');
-    if (editProfileBtn) {
-        editProfileBtn.addEventListener('click', async function () {
-            const currentEmail = getCurrentUserEmail();
-            
-            // Get current profile values from the page
-            const profileFields = document.querySelectorAll('.profile-field');
-            let currentName = '';
-            let currentPhone = '';
-            profileFields.forEach(field => {
-                const label = field.querySelector('label')?.textContent?.replace(':', '').trim().toLowerCase();
-                const value = field.querySelector('span')?.textContent?.trim() || '';
-                if (label === 'full name') currentName = value;
-                if (label === 'phone') currentPhone = value;
-            });
-    
-            const formData = await showFormModal({
-                title: 'Edit Profile',
-                submitText: 'Save Profile',
-                fields: [
-                    { name: 'name', label: 'Full Name', value: currentName },
-                    { name: 'phoneNumber', label: 'Phone', value: currentPhone }
-                ]
-            });
-            if (!formData) return;
-    
-            const newName = (formData.name || '').trim();
-            const newPhone = (formData.phoneNumber || '').trim();
-    
-            if (!newName && !newPhone) {
-                showToast('No changes to save.', 'warning');
-                return;
-            }
-    
-            // Find employee ID from appState using logged-in email
-            const employee = appState.employees.find(e => 
-                e.email.toLowerCase() === currentEmail.toLowerCase()
-            );
-    
-            // If not in appState (user dashboard doesn't load employees), fetch directly
-            let employeeId = employee?.id;
-            if (!employeeId) {
-                try {
-                    const meResponse = await apiRequest('/api/auth/me');
-                    employeeId = meResponse.employee?.id;
-                } catch (err) {
-                    showToast('Could not identify your account.', 'error');
-                    return;
-                }
-            }
-    
-            if (!employeeId) {
-                showToast('Could not identify your account.', 'error');
-                return;
-            }
-    
-            const payload = {};
-            if (newName) payload.name = newName;
-            if (newPhone) payload.phoneNumber = newPhone;
-    
-            try {
-                await apiRequest(`/api/employees/${encodeURIComponent(employeeId)}`, {
-                    method: 'PATCH',
-                    body: JSON.stringify(payload)
-                });
-    
-                // Update UI immediately
-                profileFields.forEach(field => {
-                    const label = field.querySelector('label')?.textContent?.replace(':', '').trim().toLowerCase();
-                    const span = field.querySelector('span');
-                    if (label === 'full name' && newName && span) span.textContent = newName;
-                    if (label === 'phone' && newPhone && span) span.textContent = newPhone;
-                });
-    
-                showToast('Profile updated successfully!', 'success');
-            } catch (error) {
-                showToast(error.message || 'Unable to update profile.', 'error');
-            }
-        });
-    }
+    }); 
 
     // ── Save Settings ────────────────────────────────────────────
     const saveSettingsBtn = document.querySelector('.save-settings-btn');
