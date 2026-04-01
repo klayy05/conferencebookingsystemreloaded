@@ -1670,7 +1670,8 @@ async function handleApi(request, response, requestUrl) {
     }
 
     if (request.method === 'DELETE' && requestUrl.pathname.startsWith('/api/bookings/')) {
-        const bookingId = requestUrl.pathname.split('/').pop();
+        const encodedId = requestUrl.pathname.split('/').pop();
+        const bookingId = decodeURIComponent(encodedId);
         const data = await loadAppData();
         const booking = data.bookings.find((item) => item.id === bookingId);
 
