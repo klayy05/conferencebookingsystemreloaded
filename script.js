@@ -30,6 +30,23 @@ function getActiveSession() {
     }
 }
 
+// Show loading on a specific button
+function showButtonLoading(button, originalText = null) {
+    if (!button) return;
+    button._originalText = originalText || button.textContent;
+    button.textContent = '...';
+    button.disabled = true;
+    button.classList.add('btn-loading');
+}
+
+// Restore button
+function hideButtonLoading(button) {
+    if (!button) return;
+    button.textContent = button._originalText || button.textContent;
+    button.disabled = false;
+    button.classList.remove('btn-loading');
+}
+
 function setActiveSession(user, token = '') {
     const session = {
         email: user.email,
@@ -939,6 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyLanguage(this.value);
             });
         }
+        applyResponsiveTableLabels();
     }
 
     // ── Data fetching from API ───────────────────────────────────
@@ -1099,6 +1117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateDashboardStats();
+        applyResponsiveTableLabels();
     }
 
     function updateRoomsDisplay() {
@@ -1201,6 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderUsersPage(currentPage);
+        applyResponsiveTableLabels();
         const uPrev = document.querySelector('#usersPagination .pagination-prev');
         const uNext = document.querySelector('#usersPagination .pagination-next');
         if (uPrev) uPrev.onclick = () => { if (currentPage > 1) renderUsersPage(--currentPage); };
@@ -1249,6 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cNext = document.querySelector('#confPagination .pagination-next');
         if (cPrev) cPrev.onclick = () => { if (currentPage > 1) renderConfsPage(--currentPage); };
         if (cNext) cNext.onclick = () => { const t = Math.max(1, Math.ceil(appState.meetings.length / rowsPerPage)); if (currentPage < t) renderConfsPage(++currentPage); };
+        applyResponsiveTableLabels();
     }
 
     function updateUpcomingMeetings() {
@@ -1297,6 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>`;
             container.appendChild(tr);
         });
+        applyResponsiveTableLabels();
     }
 
     function updateDashboardStats() {
@@ -1467,6 +1489,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Manage users
             if (row.closest('#manage-users')) {
+                
                 const id = (row.getAttribute('data-id') || row.querySelector('td')?.textContent)?.trim();
   
                 if (!await showConfirmModal('Delete this employee?')) return;
