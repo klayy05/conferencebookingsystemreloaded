@@ -1,4 +1,3 @@
-
 const fs = require('fs');
 const path = require('path');
 loadEnv(path.join(__dirname, '.env'));

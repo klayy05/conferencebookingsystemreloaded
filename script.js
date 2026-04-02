@@ -1,6 +1,26 @@
 let __toastQueue = 0;
 const SESSION_STORAGE_KEY = 'activeSession';
 
+let loadingCount = 0;
+
+function showLoading() {
+    loadingCount++;
+    if (loadingCount === 1) {
+        const div = document.createElement('div');
+        div.id = 'loading';
+        div.className = 'loading';
+        div.innerHTML = 'Loading...';
+        document.body.appendChild(div);
+    }
+}
+
+function hideLoading() {
+    loadingCount--;
+    if (loadingCount === 0) {
+        const div = document.getElementById('loading');
+        if (div) div.remove();
+    }
+}
 function getActiveSession() {
     try {
         const raw = localStorage.getItem(SESSION_STORAGE_KEY);
@@ -47,26 +67,32 @@ async function apiRequest(path, options = {}) {
         headers.set('Content-Type', 'application/json');
     }
 
-    const response = await fetch(path, { ...options, headers });
+    showLoading();
 
-    const contentType = response.headers.get('content-type') || '';
-    const payload = response.status === 204
-        ? null
-        : contentType.includes('application/json')
-            ? await response.json()
-            : await response.text();
+    try {
+        const response = await fetch(path, { ...options, headers });
 
-    if (!response.ok) {
-        const message = typeof payload === 'string'
-            ? payload
-            : payload?.error || `Request failed with status ${response.status}`;
-        const error = new Error(message);
-        error.status = response.status;
-        error.details = payload?.details || null;
-        throw error;
+        const contentType = response.headers.get('content-type') || '';
+        const payload = response.status === 204
+            ? null
+            : contentType.includes('application/json')
+                ? await response.json()
+                : await response.text();
+
+        if (!response.ok) {
+            const message = typeof payload === 'string'
+                ? payload
+                : payload?.error || `Request failed with status ${response.status}`;
+            const error = new Error(message);
+            error.status = response.status;
+            error.details = payload?.details || null;
+            throw error;
+        }
+
+        return payload;
+    } finally {
+        hideLoading(); // This runs whether success OR error
     }
-
-    return payload;
 }
 
 // ========================================
@@ -645,7 +671,7 @@ function getStatusClass(status) {
 // ========================================
 // PASSWORD UTILITIES
 // ========================================
-/*function getPasswordStrength(password) {
+function getPasswordStrength(password) {
     let score = 0;
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
@@ -653,7 +679,7 @@ function getStatusClass(status) {
     if (/\d/.test(password)) score++;
     if (/[@$!%*?&]/.test(password)) score++;
     return score;
-}*/
+}
 
 function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
