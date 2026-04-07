@@ -456,10 +456,12 @@ function validateBookingPayload(body, sessionEmployeeRole) {
     const meetingName = String(body.meetingName || body.title || '').trim();
     const details = [];
 
+    // --- Meeting name ---
     if (!meetingName) {
         details.push({ field: 'meetingName', message: 'Meeting name is required.' });
     }
 
+    // --- Admin-only: user email ---
     if (sessionEmployeeRole === 'Admin' && body.userEmail !== undefined) {
         const email = String(body.userEmail || '').trim().toLowerCase();
         if (!email) {
@@ -469,13 +471,74 @@ function validateBookingPayload(body, sessionEmployeeRole) {
         }
     }
 
+    // --- Date ---
+    if (!body.date) {
+        details.push({ field: 'date', message: 'Booking date is required.' });
+    } else if (!isValidIsoDate(body.date)) {
+        details.push({ field: 'date', message: 'Booking date must use YYYY-MM-DD format.' });
+    }
+
+    // --- Start time ---
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!body.startTime) {
+        details.push({ field: 'startTime', message: 'Start time is required.' });
+    } else if (!timeRegex.test(body.startTime)) {
+        details.push({ field: 'startTime', message: 'Start time must use HH:MM format (e.g. 08:00).' });
+    }
+
+    // --- End time or duration (at least one required) ---
+    const hasEndTime = body.endTime && timeRegex.test(body.endTime);
+    const hasDuration = body.duration && parseDurationToMs(body.duration) > 0;
+
+    if (!body.endTime && !body.duration) {
+        details.push({ field: 'endTime', message: 'Either end time or duration is required.' });
+    } else if (body.endTime && !timeRegex.test(body.endTime)) {
+        details.push({ field: 'endTime', message: 'End time must use HH:MM format (e.g. 09:00).' });
+    }
+
+    // --- Time logic: only check if date + both times are valid so far ---
+    if (!details.length && body.date && body.startTime && hasEndTime) {
+        const start = buildDateTime(body.date, body.startTime);
+        const end = buildDateTime(body.date, body.endTime);
+
+        if (end <= start) {
+            details.push({
+                field: 'endTime',
+                message: 'End time must be after start time.'
+            });
+        } else {
+            const durationMs = end - start;
+            const fifteenMin = 15 * 60 * 1000;
+            const twelveHours = 12 * 60 * 60 * 1000;
+
+            if (durationMs < fifteenMin) {
+                details.push({
+                    field: 'endTime',
+                    message: 'Booking duration must be at least 15 minutes.'
+                });
+            } else if (durationMs > twelveHours) {
+                details.push({
+                    field: 'endTime',
+                    message: 'Booking duration cannot exceed 12 hours.'
+                });
+            }
+        }
+    }
+
+    // --- Date must not be in the past ---
+    if (!details.length && body.date) {
+        const today = new Date().toISOString().slice(0, 10);
+        if (body.date < today) {
+            details.push({ field: 'date', message: 'Booking date cannot be in the past.' });
+        }
+    }
+
     if (details.length) {
+        console.log('Validation failed:', details);
         fail(400, 'Booking payload is invalid', details);
     }
 
-    return {
-        meetingName
-    };
+    return { meetingName };
 }
 
 function mapSupabaseError(error) {
@@ -1171,17 +1234,23 @@ function buildNotificationMessage(notification) {
     const meetingName = payload.meetingName || 'Meeting';
     const roomName = payload.roomName || 'assigned room';
     const startTime = payload.startTime ? new Date(payload.startTime).toLocaleString() : '';
+    const endTime = payload.endTime ? new Date(payload.endTime).toLocaleString() : '';
 
     switch (notification.notification_type) {
         case 'booking_confirmation':
             return {
-                subject: `Booking confirmed: ${meetingName}`,
+                subject: `✅ Booking confirmed: ${meetingName}`,
                 text: `Your meeting "${meetingName}" has been booked in ${roomName}. Start time: ${startTime}.`
             };
         case 'meeting_reminder':
             return {
-                subject: `Reminder: ${meetingName} starts soon`,
-                text: `Reminder: your meeting "${meetingName}" starts at ${startTime} in ${roomName}.`
+                subject: `⏰ Reminder: "${meetingName}" starts in 5 minutes`,
+                text: `Your meeting "${meetingName}" in ${roomName} starts in 5 minutes.`
+            };
+        case 'meeting_ending_soon':
+            return {
+                subject: `⚠️ Meeting ending soon: "${meetingName}"`,
+                text: `Your booked meeting "${meetingName}" in ${roomName} will end in 5 minutes.`
             };
         default:
             return {
@@ -1346,6 +1415,7 @@ async function queueBookingNotifications(booking, employee, room) {
     }
 
     const startDate = new Date(booking.startTime);
+    const endDate = new Date(booking.endTime);
     const now = new Date();
     const notifications = [];
     const payload = {
@@ -1360,6 +1430,7 @@ async function queueBookingNotifications(booking, employee, room) {
         endTime: booking.endTime
     };
 
+    // 1. Booking confirmation (send immediately)
     notifications.push({
         id: createId('#NTF-'),
         booking_id: booking.id,
@@ -1371,21 +1442,39 @@ async function queueBookingNotifications(booking, employee, room) {
         payload
     });
 
-    const reminderAt = addMinutes(startDate, -30);
-    if (reminderAt > now) {
+    // 2. Start reminder (5 minutes before meeting starts)
+    const startReminderAt = addMinutes(startDate, -5);
+    if (startReminderAt > now) {
         notifications.push({
             id: createId('#NTF-'),
             booking_id: booking.id,
             employee_id: employee.id,
             channel: 'email',
             notification_type: 'meeting_reminder',
-            scheduled_for: reminderAt.toISOString(),
+            scheduled_for: startReminderAt.toISOString(),
             status: 'pending',
             payload
         });
     }
 
+    // 3. End reminder (5 minutes before meeting ends)
+    const endReminderAt = addMinutes(endDate, -5);
+    if (endReminderAt > now) {
+        notifications.push({
+            id: createId('#NTF-'),
+            booking_id: booking.id,
+            employee_id: employee.id,
+            channel: 'email',
+            notification_type: 'meeting_ending_soon',
+            scheduled_for: endReminderAt.toISOString(),
+            status: 'pending',
+            payload
+        });
+    }
+
+    // SMS notifications (if phone number exists)
     if (employee.phoneNumber) {
+        // SMS: Booking confirmation
         notifications.push({
             id: createId('#NTF-'),
             booking_id: booking.id,
@@ -1397,14 +1486,29 @@ async function queueBookingNotifications(booking, employee, room) {
             payload
         });
 
-        if (reminderAt > now) {
+        // SMS: Start reminder
+        if (startReminderAt > now) {
             notifications.push({
                 id: createId('#NTF-'),
                 booking_id: booking.id,
                 employee_id: employee.id,
                 channel: 'sms',
                 notification_type: 'meeting_reminder',
-                scheduled_for: reminderAt.toISOString(),
+                scheduled_for: startReminderAt.toISOString(),
+                status: 'pending',
+                payload
+            });
+        }
+
+        // SMS: End reminder
+        if (endReminderAt > now) {
+            notifications.push({
+                id: createId('#NTF-'),
+                booking_id: booking.id,
+                employee_id: employee.id,
+                channel: 'sms',
+                notification_type: 'meeting_ending_soon',
+                scheduled_for: endReminderAt.toISOString(),
                 status: 'pending',
                 payload
             });
@@ -1588,6 +1692,9 @@ async function handleApi(request, response, requestUrl) {
     }
 
     if (request.method === 'POST' && requestUrl.pathname === '/api/bookings') {
+
+        console.log('=== BOOKING REQUEST RECEIVED ===');
+
         const body = await readJsonBody(request);
         const validatedBooking = validateBookingPayload(body, session.employee.role);
         const data = await loadAppData();
@@ -1636,6 +1743,8 @@ async function handleApi(request, response, requestUrl) {
             ? buildDateTime(recommendation.request.date, recommendation.request.endTime)
             : new Date(startDate.getTime() + recommendation.request.durationMs);
 
+           
+
         const insertPayload = {
             id: createId('#BKG-'),
             employee_id: owner.id,
@@ -1647,6 +1756,9 @@ async function handleApi(request, response, requestUrl) {
             duration: body.duration || room.duration || '1 hr',
             status: 'Confirmed'
         };
+
+        console.log('Insert payload:', insertPayload);
+        console.log('startDate:', startDate.toISOString(), 'endDate:', endDate.toISOString());
 
         const { data: insertedRows, error } = await supabase
             .from('bookings')
